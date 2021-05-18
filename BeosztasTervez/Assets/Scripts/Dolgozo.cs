@@ -5,11 +5,11 @@ using UnityEngine;
 public enum muszakok
 {
     Ures,
+    Szabi,
     Nappal,
     Éjszaka,
     Alvo,
-    Piheno,
-    Szabi
+    Piheno
 }
 
 [System.Serializable]
