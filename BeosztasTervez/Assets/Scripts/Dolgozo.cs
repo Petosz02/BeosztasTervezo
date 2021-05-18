@@ -8,7 +8,8 @@ public enum muszakok
     Nappal,
     Éjszaka,
     Alvo,
-    Piheno
+    Piheno,
+    Szabi
 }
 
 [System.Serializable]
