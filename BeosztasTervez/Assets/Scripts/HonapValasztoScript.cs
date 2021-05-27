@@ -22,6 +22,8 @@ public class HonapValasztoScript : MonoBehaviour
     public List<string> honapok = new List<string> { "Január", "Február", "Március", "Április", "Május", "Júnis", "Július", "Augusztus", "Szeptember", "Október", "November", "December" };
     public int honapNapjai;
 
+    public int probakSzama = 10;
+
 
     // Start is called before the first frame update
     void Start()
@@ -37,12 +39,32 @@ public class HonapValasztoScript : MonoBehaviour
         SetupHonapNapjaiPanel();
         UresBeosztas();
 
-        Debug.Log(dolgozok[0].beosztas[2].ToString());
+        //Debug.Log(dolgozok[0].beosztas[2].ToString());
     }
 
     public void StartGen()
     {
-        GenerateMuszak();
+        //GenerateMuszak();
+        StartCoroutine(EnumGenerateMuszak());
+    }
+
+    IEnumerator EnumGenerateMuszak()
+    {
+        Vector2Int poz = FindUres(dolgozok);
+        while (poz != new Vector2Int(-1, -1))
+        {
+            for (int i = 2; i < Enum.GetNames(typeof(muszakok)).Length; i++)
+            {
+                if (Validator(poz, (muszakok)i))
+                {
+                    MuszakBeallitas(poz, (muszakok)i);
+                    StartCoroutine(EnumGenerateMuszak());
+                }
+                MuszakBeallitas(poz, muszakok.Ures);
+            }
+            return null;
+        }
+        return null;
     }
 
     public bool GenerateMuszak()
@@ -53,16 +75,18 @@ public class HonapValasztoScript : MonoBehaviour
             return true;
         }
         else { 
-            for (int i = 2; i < Enum.GetValues(typeof(muszakok)).Length; i++)
+            for (int i = 2; i < Enum.GetNames(typeof(muszakok)).Length; i++)
             {
                 if (Validator(poz, (muszakok)i))
                 {
                     MuszakBeallitas(poz, (muszakok)i);
                     if (GenerateMuszak())
                         return true;
+                    MuszakBeallitas(poz, muszakok.Ures);
                 }
             }
         }
+        Debug.Log("Nincs megoldás");
         return false;
     }
     void MuszakBeallitas(Vector2Int poz, muszakok muszak)
@@ -80,6 +104,7 @@ public class HonapValasztoScript : MonoBehaviour
             //Éjszakás után nem mehet nappalra
             if (dolgozok[poz.x].beosztas[poz.y-1] == muszakok.Éjszaka && muszak == muszakok.Nappal)
             {
+                Debug.Log(dolgozok[poz.x].nev + " éjszakás után nincs nappal " + poz.y.ToString());
                 return false;
             }
         }
@@ -122,6 +147,7 @@ public class HonapValasztoScript : MonoBehaviour
     void UresBeosztas()
     {
         dolgozok = new List<Dolgozo>();
+        //A dolgozók nevei alapján létrehozza a havi beosztást
         foreach (string nev in nevek)
         {
             Dolgozo d = new Dolgozo();
@@ -135,6 +161,7 @@ public class HonapValasztoScript : MonoBehaviour
             dolgozok.Add(d);
         }
 
+        //Megcsinálja a grafikát hozzájuk
         for (int i = 0; i < dolgozok.Count; i++)
         {
             GameObject panel = Instantiate(dolgozoPanel);
@@ -163,7 +190,7 @@ public class HonapValasztoScript : MonoBehaviour
                 dp.ClearOptions();
                 dp.AddOptions(mList);
                 dp.onValueChanged.AddListener(x => {
-                    Debug.Log("működik" + d + ":" + y);
+                    //Debug.Log("működik" + d + ":" + y);
                     muszakok musz = (muszakok)dp.value;
                     dolgozok[d].beosztas[y] = musz;
                 });
@@ -177,10 +204,7 @@ public class HonapValasztoScript : MonoBehaviour
     void SetupHonapValaszto()
     {
         honapValaszto.ClearOptions();
-        //foreach (string item in honapok)
-        //{
-            honapValaszto.AddOptions(honapok);
-        //}
+        honapValaszto.AddOptions(honapok);
         honapValaszto.value = DateTime.Now.Month - 1;
         Debug.Log(DateTime.Now.Month);
     }

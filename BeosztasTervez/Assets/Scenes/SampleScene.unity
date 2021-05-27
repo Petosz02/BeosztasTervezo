@@ -1522,6 +1522,8 @@ MonoBehaviour:
   - nev1
   - nev2
   - nev3
+  - nev4
+  - nev5
   honapValaszto: {fileID: 1355157333}
   honapNapjaiPanel: {fileID: 2072916355}
   napPanelPrefab: {fileID: 2973879647919811987, guid: d1c87db85dd8756409afb2bfc7283739,
@@ -1548,6 +1550,7 @@ MonoBehaviour:
   - November
   - December
   honapNapjai: 0
+  probakSzama: 2
 --- !u!4 &1791899982
 Transform:
   m_ObjectHideFlags: 0

@@ -17,6 +17,7 @@ public class Dolgozo
 {
     public string nev;
     public List<muszakok> beosztas;
+    public int haviMunkaOra;
 
     public Dolgozo()
     {
