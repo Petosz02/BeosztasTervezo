@@ -44,8 +44,8 @@ public class HonapValasztoScript : MonoBehaviour
 
     public void StartGen()
     {
-        //GenerateMuszak();
-        StartCoroutine(EnumGenerateMuszak());
+        GenerateMuszak();
+        //StartCoroutine(EnumGenerateMuszak());
     }
 
     IEnumerator EnumGenerateMuszak()
@@ -71,23 +71,20 @@ public class HonapValasztoScript : MonoBehaviour
     {
         Vector2Int poz = FindUres(dolgozok);
         if (poz == new Vector2Int(-1, -1))
-        {
             return true;
-        }
-        else { 
-            for (int i = 2; i < Enum.GetNames(typeof(muszakok)).Length; i++)
+        
+        for (int i = 2; i < mList.Count; i++)
+        {
+            if (Validator(poz, (muszakok)i))
             {
-                if (Validator(poz, (muszakok)i))
-                {
-                    MuszakBeallitas(poz, (muszakok)i);
-                    if (GenerateMuszak())
-                        return true;
-                    MuszakBeallitas(poz, muszakok.Ures);
-                }
+                MuszakBeallitas(poz, (muszakok)i);
+                if (GenerateMuszak())
+                    return true;
             }
+            MuszakBeallitas(poz, muszakok.Ures);
         }
-        Debug.Log("Nincs megoldás");
         return false;
+        
     }
     void MuszakBeallitas(Vector2Int poz, muszakok muszak)
     {
@@ -109,7 +106,21 @@ public class HonapValasztoScript : MonoBehaviour
             }
         }
 
+        //Ne menjen 2 napot dolgozni egymás után
+        if (poz.y > 2)
+        {
+            int count = 0;
+            for (int i = 0; i <= 2; i++)
+            {
+                if (dolgozok[poz.x].beosztas[poz.y - 1 - i] == muszakok.Nappal || dolgozok[poz.x].beosztas[poz.y - 1 - i] == muszakok.Éjszaka)
+                    count++;
+            }
+            if (count > 2)
+                return false;
+        }
+
         //Nappalos után éjszakás vagy pihenőnap jöhet
+
 
         if (poz.x == dolgozok.Count - 1)
         {
@@ -126,10 +137,10 @@ public class HonapValasztoScript : MonoBehaviour
             {
                 return false;
             }
-
+        }
         //Legalább 2 ember legyen bent nappal
 
-        }
+        
 
         //Legalább 160 óra legyen mindenkinek
 
